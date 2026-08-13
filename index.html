@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --encre:#12161A;
+    --fond:#E9EBE6;
+    --carte:#FFFFFF;
+    --trait:#CFD3CB;
+    --gris:#6B7280;
+    --voulue:#2E6B4F;
+    --nonvoulue:#B23A1C;
+    --focus:#2B4C7E;
+    --r:4px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;background:var(--fond);color:var(--encre);
+    font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.45;
+    padding-bottom:40px;
+  }
+  .zone{max-width:560px;margin:0 auto;padding:0 16px}
+
+  /* En-tête : bandeau d'atelier */
+  header{
+    background:var(--encre);color:var(--fond);padding:14px 0;margin-bottom:20px;
+    border-bottom:3px solid var(--nonvoulue);
+  }
+  header .zone{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+  h1{
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;
+    letter-spacing:.08em;text-transform:uppercase;margin:0;
+  }
+  .site{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9AA3A8;letter-spacing:.1em}
+
+  h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;letter-spacing:.06em;
+     text-transform:uppercase;margin:0 0 12px}
+  .surtitre{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+     text-transform:uppercase;color:var(--gris);margin-bottom:6px}
+
+  /* Compteurs du jour */
+  .compteurs{display:flex;gap:8px;margin-bottom:20px}
+  .compteur{flex:1;background:var(--carte);border:1px solid var(--trait);border-radius:var(--r);padding:10px 12px}
+  .compteur b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:28px;line-height:1}
+  .compteur span{font-size:12px;color:var(--gris)}
+  .compteur.v b{color:var(--voulue)} .compteur.n b{color:var(--nonvoulue)}
+
+  /* Boutons */
+  button{font-family:inherit;font-size:16px;cursor:pointer;border-radius:var(--r)}
+  button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+  .principal{
+    width:100%;background:var(--encre);color:var(--fond);border:none;
+    padding:20px;font-family:'Barlow Condensed',sans-serif;font-size:24px;
+    letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  }
+  .principal:active{transform:translateY(1px)}
+  .principal[disabled]{opacity:.5}
+  .secondaire{
+    background:transparent;border:1px solid var(--trait);color:var(--encre);
+    padding:12px 16px;width:100%;
+  }
+  .lien{background:none;border:none;color:var(--gris);text-decoration:underline;padding:8px 0;font-size:14px}
+
+  /* Choix du type : deux blocs pleine largeur */
+  .choix{display:grid;gap:12px;margin-bottom:16px}
+  .bloc{
+    text-align:left;border:1px solid var(--trait);background:var(--carte);
+    padding:18px;display:flex;gap:14px;align-items:flex-start;width:100%;
+  }
+  .bloc .barre{width:6px;align-self:stretch;border-radius:2px}
+  .bloc.v .barre{background:var(--voulue)} .bloc.n .barre{background:var(--nonvoulue)}
+  .bloc strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:22px;
+    letter-spacing:.05em;text-transform:uppercase}
+  .bloc small{color:var(--gris);font-size:14px}
+  .bloc:active{background:#F4F5F2}
+
+  /* Formulaire */
+  .champ{margin-bottom:16px}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  input,select,textarea{
+    width:100%;font-family:inherit;font-size:16px;padding:13px 12px;
+    border:1px solid var(--trait);border-radius:var(--r);background:var(--carte);color:var(--encre);
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 3px rgba(43,76,126,.15)}
+  textarea{min-height:70px;resize:vertical}
+  .duo{display:grid;grid-template-columns:2fr 1.2fr;gap:10px}
+
+  /* Photo */
+  .photo{
+    border:2px dashed var(--trait);border-radius:var(--r);background:var(--carte);
+    padding:26px 16px;text-align:center;color:var(--gris);display:block;cursor:pointer;
+  }
+  .photo b{display:block;color:var(--encre);font-size:16px;margin-bottom:4px}
+  .apercu{position:relative;margin-bottom:12px}
+  .apercu img{width:100%;border-radius:var(--r);display:block;border:1px solid var(--trait)}
+  .apercu button{position:absolute;top:8px;right:8px;background:rgba(18,22,26,.85);color:#fff;
+    border:none;padding:8px 12px;font-size:13px}
+  #fichier{display:none}
+
+  .ia{border-left:3px solid var(--focus);background:#EEF2F8;padding:12px;font-size:14px;margin-bottom:16px}
+  .ia b{font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+
+  /* Étiquette de confirmation */
+  .etiquette{
+    background:var(--carte);border:1px solid var(--encre);padding:22px;text-align:center;
+    background-image:radial-gradient(circle at 6px 50%, var(--fond) 5px, transparent 6px);
+    background-size:14px 14px;background-repeat:repeat-y;background-position:left;
+  }
+  .etiquette .num{font-family:'IBM Plex Mono',monospace;font-size:30px;letter-spacing:.05em;margin:8px 0}
+  .badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;padding:4px 8px;border-radius:2px;color:#fff}
+  .badge.v{background:var(--voulue)} .badge.n{background:var(--nonvoulue)}
+
+  /* Historique */
+  .ligne{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--trait);align-items:baseline}
+  .ligne .pastille{width:8px;height:8px;border-radius:50%;flex:none;transform:translateY(-1px)}
+  .ligne .pastille.v{background:var(--voulue)} .ligne .pastille.n{background:var(--nonvoulue)}
+  .ligne .corps{flex:1;min-width:0}
+  .ligne .corps b{font-weight:600}
+  .ligne .meta{font-size:13px;color:var(--gris)}
+  .ligne .heure{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gris)}
+
+  .vide{color:var(--gris);font-size:14px;padding:16px 0}
+  .erreur{background:#FBE9E4;border-left:3px solid var(--nonvoulue);padding:12px;font-size:14px;margin-bottom:16px}
+  .cache{display:none}
+  @media (prefers-reduced-motion:no-preference){
+    .vue{animation:entree .18s ease-out}
+    @keyframes entree{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="zone">
+    <h1>Scissions</h1>
+    <span class="site">MAISON SAVARY · EMBALLAGE</span>
+  </div>
+</header>
+
+<!-- ACCUEIL -->
+<div class="zone vue" id="vueAccueil">
+  <div class="surtitre">Aujourd'hui</div>
+  <div class="compteurs">
+    <div class="compteur"><b id="cTotal">–</b><span>relevées</span></div>
+    <div class="compteur v"><b id="cVoulue">–</b><span>voulues</span></div>
+    <div class="compteur n"><b id="cNon">–</b><span>non voulues</span></div>
+  </div>
+
+  <button class="principal" onclick="allerType()">＋ Nouvelle scission</button>
+
+  <h2 style="margin-top:28px">Dernières entrées</h2>
+  <div id="historique"><div class="vide">Chargement…</div></div>
+</div>
+
+<!-- CHOIX DU TYPE -->
+<div class="zone vue cache" id="vueType">
+  <div class="surtitre">Étape 1 sur 2</div>
+  <h2>Quel type de scission ?</h2>
+  <div class="choix">
+    <button class="bloc v" onclick="choisir('voulue')">
+      <span class="barre"></span>
+      <span><strong>Scission voulue</strong>
+      <small>Séparation décidée : demande client, répartition en plusieurs colis, portionnage.</small></span>
+    </button>
+    <button class="bloc n" onclick="choisir('non_voulue')">
+      <span class="barre"></span>
+      <span><strong>Scission non voulue</strong>
+      <small>Subie : casse machine, écrasement au transport, erreur de manutention.</small></span>
+    </button>
+  </div>
+  <button class="lien" onclick="retourAccueil()">Annuler</button>
+</div>
+
+<!-- FORMULAIRE -->
+<div class="zone vue cache" id="vueForm">
+  <div class="surtitre">Étape 2 sur 2</div>
+  <h2 id="titreForm">Détail</h2>
+  <div id="zoneErreur"></div>
+
+  <div class="champ">
+    <label>Photo</label>
+    <div class="apercu cache" id="apercu">
+      <img id="image" alt="Photo de la scission">
+      <button onclick="retirerPhoto()">Retirer</button>
+    </div>
+    <label class="photo" id="zonePhoto" for="fichier">
+      <b>Prendre une photo</b>
+      Appareil photo ou galerie
+    </label>
+    <input type="file" id="fichier" accept="image/*" capture="environment" onchange="chargerPhoto(this)">
+    <button class="secondaire cache" id="btnIA" style="margin-top:10px" onclick="lireAvecIA()">
+      Lire la photo avec l'IA
+    </button>
+  </div>
+
+  <div id="blocIA" class="ia cache"></div>
+
+  <div class="champ">
+    <label for="client">Client</label>
+    <input id="client" list="lClients" autocomplete="off" placeholder="Nom du client">
+    <datalist id="lClients"></datalist>
+  </div>
+
+  <div class="champ">
+    <label for="produit">Produit</label>
+    <input id="produit" list="lProduits" autocomplete="off" placeholder="Référence produit">
+    <datalist id="lProduits"></datalist>
+  </div>
+
+  <div class="champ duo">
+    <div>
+      <label for="quantite">Quantité</label>
+      <input id="quantite" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0">
+    </div>
+    <div>
+      <label for="unite">Unité</label>
+      <select id="unite">
+        <option>pièce(s)</option><option>colis</option><option>kg</option><option>plaque(s)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="champ">
+    <label for="motif">Motif</label>
+    <select id="motif"></select>
+  </div>
+
+  <div class="champ">
+    <label for="operateur">Opérateur</label>
+    <input id="operateur" list="lOperateurs" autocomplete="off" placeholder="Qui relève ?">
+    <datalist id="lOperateurs"></datalist>
+  </div>
+
+  <div class="champ">
+    <label for="commentaire">Commentaire</label>
+    <textarea id="commentaire" placeholder="Précision utile pour la production"></textarea>
+  </div>
+
+  <button class="principal" id="btnEnvoyer" onclick="envoyer()">Enregistrer la scission</button>
+  <button class="lien" onclick="allerType()">Changer de type</button>
+</div>
+
+<!-- CONFIRMATION -->
+<div class="zone vue cache" id="vueFin">
+  <div class="etiquette">
+    <span class="badge" id="finBadge"></span>
+    <div class="num" id="finId"></div>
+    <div style="color:var(--gris);font-size:14px" id="finResume"></div>
+  </div>
+  <div style="margin-top:20px">
+    <button class="principal" onclick="allerType()">＋ Nouvelle scission</button>
+    <button class="secondaire" style="margin-top:10px" onclick="retourAccueil()">Retour à l'accueil</button>
+  </div>
+</div>
+
+<script>
+var etat = { type:null, photo:null, ref:null, ia:null };
+
+/* --- appels serveur en promesses --- */
+function serveur(fn, args){
+  return new Promise(function(ok, ko){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(ko)[fn].apply(null, args||[]);
+  });
+}
+
+/* --- navigation --- */
+function afficher(id){
+  ['vueAccueil','vueType','vueForm','vueFin'].forEach(function(v){
+    document.getElementById(v).classList.toggle('cache', v !== id);
+  });
+  window.scrollTo(0,0);
+}
+function retourAccueil(){ afficher('vueAccueil'); chargerHistorique(); }
+function allerType(){ afficher('vueType'); }
+
+function choisir(type){
+  etat.type = type; etat.photo = null; etat.ia = null;
+  document.getElementById('titreForm').textContent =
+    type === 'voulue' ? 'Scission voulue' : 'Scission non voulue';
+  ['client','produit','quantite','commentaire','operateur'].forEach(function(i){
+    document.getElementById(i).value = '';
+  });
+  retirerPhoto();
+  document.getElementById('zoneErreur').innerHTML = '';
+  document.getElementById('blocIA').classList.add('cache');
+  remplirMotifs();
+  afficher('vueForm');
+}
+
+/* --- référentiel --- */
+function remplirListe(idListe, valeurs){
+  document.getElementById(idListe).innerHTML =
+    (valeurs||[]).map(function(v){ return '<option value="'+v.replace(/"/g,'&quot;')+'">'; }).join('');
+}
+function remplirMotifs(){
+  var m = etat.type === 'voulue' ? (etat.ref&&etat.ref.motifsVoulue) : (etat.ref&&etat.ref.motifsNonVoulue);
+  document.getElementById('motif').innerHTML =
+    '<option value="">—</option>' + (m||[]).map(function(v){ return '<option>'+v+'</option>'; }).join('');
+}
+
+/* --- photo : compression avant envoi --- */
+function chargerPhoto(input){
+  var f = input.files[0];
+  if(!f) return;
+  var lecteur = new FileReader();
+  lecteur.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var max = 1400;
+      var ech = Math.min(1, max / Math.max(img.width, img.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(img.width*ech); c.height = Math.round(img.height*ech);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      var url = c.toDataURL('image/jpeg', 0.75);
+      etat.photo = { data: url.split(',')[1], mimeType: 'image/jpeg' };
+      document.getElementById('image').src = url;
+      document.getElementById('apercu').classList.remove('cache');
+      document.getElementById('zonePhoto').classList.add('cache');
+      document.getElementById('btnIA').classList.remove('cache');
+    };
+    img.src = e.target.result;
+  };
+  lecteur.readAsDataURL(f);
+}
+function retirerPhoto(){
+  etat.photo = null; etat.ia = null;
+  document.getElementById('fichier').value = '';
+  document.getElementById('apercu').classList.add('cache');
+  document.getElementById('zonePhoto').classList.remove('cache');
+  document.getElementById('btnIA').classList.add('cache');
+  document.getElementById('blocIA').classList.add('cache');
+}
+
+/* --- IA : pré-remplissage --- */
+function lireAvecIA(){
+  if(!etat.photo) return;
+  var b = document.getElementById('btnIA');
+  b.disabled = true; b.textContent = 'Lecture en cours…';
+  serveur('analyserPhoto', [etat.photo, etat.type]).then(function(r){
+    b.disabled = false; b.textContent = 'Relire la photo avec l\'IA';
+    var bloc = document.getElementById('blocIA');
+    bloc.classList.remove('cache');
+    if(!r.ok){ bloc.innerHTML = '<b>IA indisponible</b><br>'+r.message+' Remplis les champs à la main.'; return; }
+    var d = r.donnees || {};
+    etat.ia = { gravite: d.gravite || '', resume: d.resume || '' };
+    if(d.produit && !document.getElementById('produit').value) document.getElementById('produit').value = d.produit;
+    if(d.quantite && !document.getElementById('quantite').value) document.getElementById('quantite').value = d.quantite;
+    if(d.motif) { var s = document.getElementById('motif');
+      for(var i=0;i<s.options.length;i++){ if(s.options[i].value === d.motif) s.selectedIndex = i; } }
+    bloc.innerHTML = '<b>Proposition de l\'IA</b><br>'+(d.resume||'—')+
+      '<br><span style="color:var(--gris)">Gravité estimée : '+(d.gravite||'—')+'. À vérifier avant d\'enregistrer.</span>';
+  }).catch(function(){
+    b.disabled = false; b.textContent = 'Lire la photo avec l\'IA';
+  });
+}
+
+/* --- envoi --- */
+function envoyer(){
+  var donnees = {
+    type: etat.type,
+    client: document.getElementById('client').value.trim(),
+    produit: document.getElementById('produit').value.trim(),
+    quantite: document.getElementById('quantite').value,
+    unite: document.getElementById('unite').value,
+    motif: document.getElementById('motif').value,
+    operateur: document.getElementById('operateur').value.trim(),
+    commentaire: document.getElementById('commentaire').value.trim(),
+    photo: etat.photo,
+    ia: etat.ia
+  };
+  var manquant = [];
+  if(!donnees.client) manquant.push('le client');
+  if(!donnees.produit) manquant.push('le produit');
+  if(!donnees.quantite) manquant.push('la quantité');
+  var zone = document.getElementById('zoneErreur');
+  if(manquant.length){
+    zone.innerHTML = '<div class="erreur">Il manque '+manquant.join(', ')+'.</div>';
+    window.scrollTo(0,0); return;
+  }
+  zone.innerHTML = '';
+
+  var b = document.getElementById('btnEnvoyer');
+  b.disabled = true; b.textContent = 'Enregistrement…';
+  serveur('enregistrerScission', [donnees]).then(function(r){
+    b.disabled = false; b.textContent = 'Enregistrer la scission';
+    var v = etat.type === 'voulue';
+    document.getElementById('finBadge').className = 'badge ' + (v?'v':'n');
+    document.getElementById('finBadge').textContent = v ? 'Scission voulue' : 'Scission non voulue';
+    document.getElementById('finId').textContent = r.id;
+    document.getElementById('finResume').textContent =
+      donnees.client + ' · ' + donnees.produit + ' · ' + donnees.quantite + ' ' + donnees.unite;
+    afficher('vueFin');
+  }).catch(function(e){
+    b.disabled = false; b.textContent = 'Enregistrer la scission';
+    zone.innerHTML = '<div class="erreur">Enregistrement impossible : '+(e.message||e)+'. Réessaie.</div>';
+    window.scrollTo(0,0);
+  });
+}
+
+/* --- historique --- */
+function chargerHistorique(){
+  serveur('getDernieres', [25]).then(function(r){
+    document.getElementById('cTotal').textContent = r.stats.jour;
+    document.getElementById('cVoulue').textContent = r.stats.voulue;
+    document.getElementById('cNon').textContent = r.stats.nonVoulue;
+    var h = document.getElementById('historique');
+    if(!r.lignes.length){ h.innerHTML = '<div class="vide">Aucune scission relevée pour le moment.</div>'; return; }
+    h.innerHTML = r.lignes.map(function(l){
+      var v = l.type === 'Voulue';
+      return '<div class="ligne">'+
+        '<span class="pastille '+(v?'v':'n')+'"></span>'+
+        '<span class="corps"><b>'+l.produit+'</b> · '+l.quantite+' '+l.unite+
+        '<div class="meta">'+l.client+(l.motif?' — '+l.motif:'')+'</div></span>'+
+        '<span class="heure">'+l.horodatage+'</span></div>';
+    }).join('');
+  });
+}
+
+/* --- démarrage --- */
+serveur('getReferentiel').then(function(r){
+  etat.ref = r;
+  remplirListe('lClients', r.clients);
+  remplirListe('lProduits', r.produits);
+  remplirListe('lOperateurs', r.operateurs);
+});
+chargerHistorique();
+</script>
+</body>
+</html>
