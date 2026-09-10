@@ -4,6 +4,9 @@
 <base target="_top">
 <meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="256x256" href="brand/favicon-256.png">
+<link rel="apple-touch-icon" href="brand/favicon-256.png">
 <style>
   :root{
     --encre:#12161A;
@@ -34,6 +37,9 @@
     font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;
     letter-spacing:.08em;text-transform:uppercase;margin:0;
   }
+  .brand-logo{display:flex;flex-direction:column;gap:4px}
+  .brand-logo img{height:20px;width:auto;display:block}
+  .brand-logo span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.1em;text-transform:uppercase}
   .site{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9AA3A8;letter-spacing:.1em}
 
   h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;letter-spacing:.06em;
@@ -136,8 +142,8 @@
 
 <header>
   <div class="zone">
-    <h1>Scissions</h1>
-    <span class="site">MAISON SAVARY · EMBALLAGE</span>
+    <div class="brand-logo"><img src="brand/logo-blanc.png" alt="Maison Savary"><span>Scissions</span></div>
+    <span class="site">EMBALLAGE</span>
   </div>
 </header>
 
